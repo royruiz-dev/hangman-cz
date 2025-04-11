@@ -1,0 +1,214 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700|Ceviche+One')
+
+html
+  height: 100%
+
+body
+  height: 100%
+  margin: 0
+  padding: 0
+  background-color: #F8DF5C
+  -webkit-font-smoothing: antialiased
+  -moz-osx-font-smoothing: grayscale
+
+.main
+  width: 500px
+  margin: 0 auto
+
+.welcome
+  font-family: 'Ceviche One', cursive
+  font-size: 64px
+  line-height: 0.7em
+  text-align: center
+  display: block
+  margin: 5px auto
+
+.button
+  display: inline-block
+  margin-top: 15px
+  cursor: pointer
+
+.base, .button-wrapper
+  display: block
+  text-align: center
+  margin: 0 auto
+
+//CSS below builds the Hangman elements
+.hangmanBuild
+  margin: 15px auto 0 auto
+  display: block
+
+.hangmanScaffold
+  height: 304px
+  margin-left: 306px
+
+.scaffoldTop-and-Rope
+  margin-left: 194px
+  margin-bottom: 189px
+
+.hangmanBottom
+  display: block
+  margin: 0 auto
+
+//CSS below builds each of the six parts of Hangman. Displayed as none to control the display within JavaScript through event handlers
+.hangmanDude
+  height: 304px
+  position: absolute
+
+.hangmanHead
+  position: absolute
+  margin: 58px auto 0 179px
+  display: none
+
+.hangmanBody
+  position: absolute
+  margin: 110px auto 0 179px
+  display: none
+
+.hangmanLeftArm
+  position: absolute
+  margin: 110px auto 0 240px
+  display: none
+
+.hangmanRightArm
+  position: absolute
+  margin: 110px auto 0 142px
+  display: none
+
+.hangmanLeftLeg
+  position: absolute
+  margin: 190px auto 0 209px
+  display: none
+
+.hangmanRightLeg
+  position: absolute
+  margin: 190px auto 0 179px
+  display: none
+
+//CSS to call out the attributes for the center panel below Hangman elements
+.wordChallenge-wrapper
+  display: block
+  margin: 0 auto
+  text-align: center
+
+.wordChallenge
+  height: 100%
+  display: inline-block
+  margin: 0 auto
+
+.content-wrapper
+  width: 55%
+  margin: 5px auto
+  position: block
+  border-top: 0.5px solid #000000
+  font-family: 'Source Sans Pro', sans-serif
+  font-size: 14px
+  font-weight: 300
+  letter-spacing: 1px
+  line-height: 1.5em
+
+.content-hr
+  width: 3em
+  background-color: black
+  height: 1px
+  border: 0
+
+.letterBox-hr
+  width: 1em
+  background-color: black
+  height: 1px
+  border: 0
+
+.letterBox
+  width: 40px
+  height: 44px
+  border-color: #000000
+  border-bottom: 1px solid black
+  padding-bottom: 4px
+  text-align: center
+  display: inline-block
+  margin: 0 auto
+  font-family: 'Source Sans Pro', sans-serif
+  font-size: 48px
+  font-weight: 600
+  color: #A93A70
+  line-height: 1.2em
+
+.clickLetter
+  margin-top: 7px
+  margin-bottom: 7px
+  font-family: 'Source Sans Pro', sans-serif
+  font-size: 16px
+  font-weight: 600
+  color: #000000
+  line-height: 1.2em
+
+.alphabet-wrapper
+  display: inline
+  margin: 10px auto 0 auto
+
+//CSS for the alphabet letters located underneath the secret word
+.alphabet
+  width: 25px
+  display: inline-block
+  text-align: center
+  border: 1px solid #A93A70
+  border-radius: 8px
+  margin: 3px
+  font-family: 'Source Sans Pro', sans-serif
+  font-size: 28px
+  font-weight: 400
+  color: #A93A70
+  line-height: 1.2em
+  cursor: pointer
+  user-select: none
+
+  &:hover
+    background-color: #A93A70
+    color: #FFFFFF
+
+//CSS for the left panel that will populate as the user goes through the game
+.wrongGuessesTitle
+  display: inline-block
+
+.wrongLetter, .guessCount
+  display: inline-block
+  font-weight: 600
+  font-size: 18px
+  color: #A93A70
+
+#gameWinner
+  margin-top: 15px
+  font-weight: 600
+  position: relative
+  font-size: 24px
+  color: #FFFFFF
+  font-weight: 400
+  border-radius: 8px
+  background-color: #A93A70
+  display: none
+  padding: 6px 0 6px 0
+  line-height: 1.2
+  min-height: 36px
+  justify-content: center
+  align-items: center
+
+//CSS below handles the attributes for blockScreen()
+#errorOverlay
+  width: 100%
+  height: 100%
+  background-color: rgba(255, 255, 255, 0.9)
+  position: absolute
+  z-index: 1000
+  display: none
+
+.errorText
+  margin: 270px auto
+  text-align: center
+  font-family: 'Source Sans Pro', sans-serif
+  font-size: 48px
+  font-weight: 300
+  color: #000000
+
+.errorText a
+  text-decoration: none

@@ -1,0 +1,110 @@
+!!!
+%html
+  %head
+    %title Hangman Game
+    %link{rel: "icon", type: "image/x-icon", href: "/static/favicon.ico"}
+    %meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    %meta(name="apple-mobile-web-app-capable" content="yes")
+    %link(rel='stylesheet' href='/static/css/style.css')
+    %script(src='/static/js/config.js')
+    %script(src='/static/js/app.js')
+    %script(src='/static/js/init.js')
+  %body
+    #errorOverlay
+      .errorText
+        Please contact the administrator at
+        %a(href='mailto:me@royruiz.com')
+          me@royruiz.com
+    .main
+
+      //Start of Content centered in the page
+      .welcome
+        Welcome to the Hangman Game!
+      .button-wrapper
+        %img#newGame.button(src='/static/img/newgame-button.png')
+
+      //All elements pertaining to the Hangman image in center of page
+      .hangmanBuild
+
+        //This controls the elements involving the Hangman silhouette. The image tags are initialized to not display. They display as the user guesses incorrectly
+        .hangmanDude
+          %img.hangmanHead(src='/static/img/head.png')
+          %img.hangmanBody(src='/static/img/body.png')
+          %img.hangmanLeftArm(src='/static/img/left-arm.png')
+          %img.hangmanRightArm(src='/static/img/right-arm.png')
+          %img.hangmanLeftLeg(src='/static/img/left-leg.png')
+          %img.hangmanRightLeg(src='/static/img/right-leg.png')
+          %img.scaffoldTop-and-Rope(src='/static/img/Scaffold-top-rope.png')
+        .hangmanScaffold
+          %img(src='/static/img/Scaffold-side.png')
+        .hangmanBottom
+          %img.base(src='/static/img/Base-and-shadow.png')
+
+      //Contains all elements in the bottom center of page. It populates as the user plays the game. It also uses the text in 'alphabet' as the guesses when performing 'click' event
+      .wordChallenge-wrapper
+        #wordChallenge
+        .alphabet-wrapper
+          .alphabet
+            A
+          .alphabet
+            B
+          .alphabet
+            C
+          .alphabet
+            D
+          .alphabet
+            E
+          .alphabet
+            F
+          .alphabet
+            G
+          .alphabet
+            H
+          .alphabet
+            I
+          .alphabet
+            J
+          .alphabet
+            K
+          .alphabet
+            L
+          .alphabet
+            M
+          .alphabet
+            N
+          .alphabet
+            O
+          .alphabet
+            P
+          .alphabet
+            Q
+          .alphabet
+            R
+          .alphabet
+            S
+          .alphabet
+            T
+          .alphabet
+            U
+          .alphabet
+            V
+          .alphabet
+            W
+          .alphabet
+            X
+          .alphabet
+            Y
+          .alphabet
+            Z
+
+          //Footer to add a visual for user to know what to do above
+          .clickLetter
+            SELECT A LETTER
+
+          //Contains all elements in the left window panel. It populates as the user plays the game
+          .content-wrapper
+            .guessesLeftTitle
+              #guessesLeft
+            #wrongGuessesTitle
+              #wrongGuesses
+            #gameWinner
