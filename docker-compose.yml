@@ -1,7 +1,14 @@
 services:
+  static_init:
+    build: ./app
+    command: cp -r /app/static/* /static_data/
+    volumes:
+      - static_data:/static_data
+    depends_on:
+      - flask
 
   flask:
-    build: . # Uses the Dockerfile to build the image
+    build: ./app # Uses the Dockerfile to build the image
     container_name: flask_app
     expose:
       - "5000" # Exposes the Flask app internally
@@ -10,16 +17,16 @@ services:
     environment:
       - FLASK_ENV=production
     volumes:
-      - static_content:/app/static # Shared volume for static files
+      - static_data:/app/static
 
   nginx:
     image: nginx:alpine
     container_name: nginx_proxy
     ports:
-      - "80:80" # Listens on port 80
+      - "8080:80" # EC2 listens on 8080, nginx container listens on 80
     volumes:
-      - ./config/nginx.conf:/etc/nginx/nginx.conf
-      - static_content:/usr/share/nginx/html/static # Serves static files from a mounted volume
+      - ./app/config/nginx.conf:/etc/nginx/nginx.conf
+      - static_data:/usr/share/nginx/html/static # Mount the static folder
     depends_on:
       - flask
     networks:
@@ -30,4 +37,4 @@ networks:
     driver: bridge
 
 volumes:
-  static_content:
+  static_data:

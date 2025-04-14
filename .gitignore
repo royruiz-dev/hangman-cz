@@ -2,3 +2,7 @@
 !/static/css/.gitkeep
 /static/index.html
 **/.DS_Store
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
