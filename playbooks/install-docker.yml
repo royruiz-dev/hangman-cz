@@ -46,3 +46,18 @@
         name: "{{ ansible_user_id }}"
         groups: docker
         append: true
+
+    # - name: Copy docker-compose.yml to the instance
+    #   ansible.builtin.copy:
+    #     src: ../docker-compose.yml
+    #     dest: /home/ubuntu/docker-compose.yml
+    #     owner: ubuntu
+    #     group: ubuntu
+    #     mode: "0644"
+
+    # - name: Run docker-compose down and up
+    #   ansible.builtin.shell: |
+    #     docker-compose -f /home/ubuntu/docker-compose.yml down
+    #     docker-compose -f /home/ubuntu/docker-compose.yml up -d
+    #   args:
+    #     chdir: /home/ubuntu
