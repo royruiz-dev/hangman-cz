@@ -1,0 +1,87 @@
+name: Provision Infrastructure with Terraform & Install Docker with Ansible
+
+on:
+  workflow_dispatch:
+  # Uncomment below to run automatically on push to main
+  # push:
+  #   branches:
+  #     - main
+
+jobs:
+  terraform:
+    name: Provision Infrastructure with Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.4"
+
+      - name: Set AWS credentials
+        run: |
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "AWS_DEFAULT_REGION=eu-central-1" >> $GITHUB_ENV
+
+      - name: Get public IP address
+        run: |
+          MY_IP=$(curl -s https://api.ipify.org)
+          echo "IP_ADDR=$MY_IP" >> $GITHUB_ENV
+
+      - name: Run terraform init and plan
+        working-directory: ./terraform
+        run: |
+          terraform init
+          terraform plan -var my_ip=${{ env.IP_ADDR }}
+
+      - name: Run terraform apply
+        working-directory: ./terraform
+        run: terraform apply -auto-approve -var my_ip=${{ env.IP_ADDR }}
+
+      - name: Extract IPs from terraform output
+        id: register
+        working-directory: ./terraform
+        run: |
+          IP_LIST=$(terraform output -json instance_ips | jq -r '.[]' | paste -sd "," -)
+          echo "instance_ips=$IP_LIST" >> $GITHUB_OUTPUT
+
+      - name: Show instance_ips (for debugging)
+        run: |
+          echo "IPs obtained from Terraform: ${{ steps.register.outputs.instance_ips }}"
+
+    outputs: # Accesses output from within the same job
+      instance_ips: ${{ steps.register.outputs.instance_ips }}
+
+  ansible:
+    name: Install Docker with Ansible
+    needs: terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show instance_ips (for debugging)
+        run: |
+          echo "IPs passed to Ansible job: ${{ needs.terraform.outputs.instance_ips }}"
+
+      - name: Set up Ansible SSH key
+        run: |
+          echo "${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}" > ssh_private_key.pem
+          chmod 600 ssh_private_key.pem
+
+      - name: Generate Ansible inventory
+        run: | # Accesses output of a different job (e.g. terraform)
+          echo "[servers]" > inventory
+          for ip in $(echo "${{ needs.terraform.outputs.instance_ips }}" | tr ',' '\n'); do
+            echo "$ip ansible_user=ubuntu ansible_ssh_private_key_file=ssh_private_key.pem" >> inventory
+          done
+
+      - name: Install Ansible
+        run: sudo apt-get update && sudo apt-get install -y ansible
+
+      - name: Run Ansible Playbook
+        run: ansible-playbook -i inventory playbooks/install-docker.yml

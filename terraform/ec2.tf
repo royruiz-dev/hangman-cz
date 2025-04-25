@@ -22,7 +22,7 @@ resource "aws_security_group_rule" "allow_ssh_inbound" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = [var.my_ip]
+  cidr_blocks       = ["${var.my_ip}/32"]
   security_group_id = aws_security_group.instances.id
 }
 
@@ -42,7 +42,7 @@ resource "aws_instance" "app_instances" {
   instance_type = "t2.micro"
   key_name      = "EC2 Tutorial"
 
-  count = 3 # Number of EC2 instances
+  count = 2 # Number of EC2 instances
 
   root_block_device {
     volume_size = 30
