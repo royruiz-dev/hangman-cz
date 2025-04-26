@@ -41,11 +41,6 @@
         enabled: true
         state: started
 
-    - name: Install Docker Compose plugin
-      ansible.builtin.apt:
-        name: docker-compose-plugin
-        state: present
-
     - name: Add user to docker group
       ansible.builtin.user:
         name: "{{ ansible_user }}"
@@ -62,7 +57,7 @@
 
     - name: Run docker compose down and up
       ansible.builtin.shell: |
-        docker-compose -f /home/ubuntu/docker-compose.yml down
-        docker-compose -f /home/ubuntu/docker-compose.yml up -d
+        docker compose -f /home/ubuntu/docker-compose.yml down
+        docker compose -f /home/ubuntu/docker-compose.yml up -d
       args:
         chdir: /home/ubuntu
