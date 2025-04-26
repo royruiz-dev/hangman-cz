@@ -74,18 +74,25 @@ jobs:
           echo "${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}" > ssh_private_key.pem
           chmod 600 ssh_private_key.pem
 
-      - name: Generate Ansible inventory
-        run: | # Accesses output of a different job (e.g. terraform)
-          echo "[servers]" > inventory
-          for ip in $(echo "${{ needs.terraform.outputs.instance_ips }}" | tr ',' '\n'); do
-            echo "\"$ip\" ansible_user=ubuntu ansible_ssh_private_key_file=ssh_private_key.pem" >> inventory
-          done
+      # - name: Generate Ansible inventory
+      #   run: | # Accesses output of a different job (e.g. terraform)
+      #     echo "[servers]" > inventory
+      #     for ip in $(echo "${ needs.terraform.outputs.instance_ips }" | tr ',' '\n'); do
+      #       echo "\"$ip\" ansible_user=ubuntu ansible_ssh_private_key_file=ssh_private_key.pem" >> inventory
+      #     done
 
-      - name: Print generated inventory for debugging
-        run: cat inventory
+      # - name: Print generated inventory for debugging
+      #   run: cat inventory
 
       - name: Install Ansible
         run: sudo apt-get update && sudo apt-get install -y ansible
 
       - name: Run Ansible Playbook
-        run: ansible-playbook -v -i inventory playbooks/install-docker.yml
+        run: |
+          ansible-playbook -v -i "${{ needs.terraform.outputs.instance_ips }}" \
+          playbooks/install-docker.yml \
+          ansible_user=ubuntu \
+          ansible_ssh_private_key_file=ssh_private_key.pem
+
+      # - name: Run Ansible Playbook
+      #   run: ansible-playbook -v -i inventory playbooks/install-docker.yml
