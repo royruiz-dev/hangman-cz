@@ -26,21 +26,21 @@ jobs:
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
           echo "AWS_DEFAULT_REGION=eu-central-1" >> $GITHUB_ENV
 
-      - name: Get public IP address
-        run: |
-          MY_IP=$(curl -s https://api.ipify.org)
-          echo "IP retrived via curl command: $MY_IP"
-          echo "IP_ADDR=$MY_IP/32" >> $GITHUB_ENV
+      # - name: Get public IP address
+      #   run: |
+      #     MY_IP=$(curl -s https://api.ipify.org)
+      #     echo "IP retrived via curl command: $MY_IP"
+      #     echo "IP_ADDR=$MY_IP/32" >> $GITHUB_ENV
 
       - name: Run terraform init and plan
         working-directory: ./terraform
         run: |
           terraform init
-          terraform plan -var my_ip=${{ env.IP_ADDR }}
+          terraform plan
 
       - name: Run terraform apply
         working-directory: ./terraform
-        run: terraform apply -auto-approve -var my_ip=${{ env.IP_ADDR }}
+        run: terraform apply -auto-approve
 
       - name: Extract IPs from terraform output
         id: register
