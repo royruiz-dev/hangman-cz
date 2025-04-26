@@ -1,6 +1,6 @@
 ---
 - name: Install Docker on Ubuntu
-  hosts: servers
+  hosts: all
   become: true
   tasks:
     - name: Update APT package
