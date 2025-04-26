@@ -55,6 +55,14 @@
         group: docker
         mode: "0644"
 
+    - name: Copy app directory to the instance
+      ansible.builtin.copy:
+        src: ./app
+        dest: /home/ubuntu/
+        owner: ubuntu
+        group: docker
+        mode: "0755"
+
     - name: Bring down existing containers
       ansible.builtin.command:
         cmd: docker compose -f /home/ubuntu/docker-compose.yml down
