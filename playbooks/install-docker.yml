@@ -57,7 +57,7 @@
 
     - name: Copy app directory to the instance
       ansible.builtin.copy:
-        src: ./app
+        src: ../app
         dest: /home/ubuntu/
         owner: ubuntu
         group: docker
