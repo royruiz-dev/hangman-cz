@@ -55,9 +55,26 @@
         group: docker
         mode: "0644"
 
-    - name: Run docker compose down and up
-      ansible.builtin.shell: |
-        docker compose -f /home/ubuntu/docker-compose.yml down
-        docker compose -f /home/ubuntu/docker-compose.yml up -d
+    - name: Bring down existing containers
+      ansible.builtin.command:
+        cmd: docker compose -f /home/ubuntu/docker-compose.yml down
       args:
         chdir: /home/ubuntu
+      register: down_result
+      changed_when: down_result.rc != 0
+
+    - name: Pull latest images
+      ansible.builtin.command:
+        cmd: docker compose -f /home/ubuntu/docker-compose.yml pull
+      args:
+        chdir: /home/ubuntu
+      register: pull_result
+      changed_when: pull_result.rc != 0
+
+    - name: Bring up containers
+      ansible.builtin.command:
+        cmd: docker compose -f /home/ubuntu/docker-compose.yml up -d
+      args:
+        chdir: /home/ubuntu
+      register: up_result
+      changed_when: up_result.rc != 0
