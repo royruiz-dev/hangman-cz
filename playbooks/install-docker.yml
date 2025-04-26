@@ -41,23 +41,28 @@
         enabled: true
         state: started
 
+    - name: Install Docker Compose plugin
+      ansible.builtin.apt:
+        name: docker-compose-plugin
+        state: present
+
     - name: Add user to docker group
       ansible.builtin.user:
-        name: "{{ ansible_user_id }}"
+        name: "{{ ansible_user }}"
         groups: docker
         append: true
 
-    # - name: Copy docker-compose.yml to the instance
-    #   ansible.builtin.copy:
-    #     src: ../docker-compose.yml
-    #     dest: /home/ubuntu/docker-compose.yml
-    #     owner: ubuntu
-    #     group: ubuntu
-    #     mode: "0644"
+    - name: Copy docker-compose.yml to the instance
+      ansible.builtin.copy:
+        src: ../docker-compose.yml
+        dest: /home/ubuntu/docker-compose.yml
+        owner: ubuntu
+        group: docker
+        mode: "0644"
 
-    # - name: Run docker-compose down and up
-    #   ansible.builtin.shell: |
-    #     docker-compose -f /home/ubuntu/docker-compose.yml down
-    #     docker-compose -f /home/ubuntu/docker-compose.yml up -d
-    #   args:
-    #     chdir: /home/ubuntu
+    - name: Run docker compose down and up
+      ansible.builtin.shell: |
+        docker-compose -f /home/ubuntu/docker-compose.yml down
+        docker-compose -f /home/ubuntu/docker-compose.yml up -d
+      args:
+        chdir: /home/ubuntu
