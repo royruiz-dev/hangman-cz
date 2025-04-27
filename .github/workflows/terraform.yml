@@ -24,28 +24,38 @@ jobs:
         run: |
           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
-          echo "AWS_DEFAULT_REGION=eu-central-1" >> $GITHUB_ENV
 
-      - name: Run terraform init and plan
+      - name: Run terraform init
+        working-directory: ./terraform
+        run: terraform init
+
+      - name: Run terraform plan
         working-directory: ./terraform
         run: |
-          terraform init
-          terraform plan
+          terraform plan $([ ! -z "${{ secrets.CUSTOM_DOMAIN_NAME }}" ] && echo "-var domain_name=${{ secrets.CUSTOM_DOMAIN_NAME }}")
 
       - name: Run terraform apply
         working-directory: ./terraform
-        run: terraform apply -auto-approve
+        run: |
+          terraform apply -auto-approve $([ ! -z "${{ secrets.CUSTOM_DOMAIN_NAME }}" ] && echo "-var domain_name=${{ secrets.CUSTOM_DOMAIN_NAME }}")
 
       - name: Extract IPs from terraform output
         id: register
         working-directory: ./terraform
         run: |
-          IP_LIST=$(terraform output -json instance_ips | jq -r '.[]' | paste -sd "," -)
-          echo "instance_ips=$IP_LIST" >> $GITHUB_OUTPUT
+          echo "instance_ips=$(terraform output -json instance_ips | jq -r '.[]' | paste -sd "," -)" >> $GITHUB_OUTPUT
 
       - name: Show instance_ips (for debugging)
         run: |
           echo "IPs obtained from Terraform: ${{ steps.register.outputs.instance_ips }}"
+
+      - name: Show Terraform outputs
+        working-directory: ./terraform
+        run: |
+          echo "alb_dns_name: $(terraform output -raw alb_dns_name)"
+          echo "domain_name_url: $(terraform output -raw domain_name_url)"
+          echo "instance_ips: $(terraform output -json instance_ips | jq -r '.[]' | paste -sd "," -)"
+          echo "route53_name_servers: $(terraform output -json route53_name_servers | jq -r '.[][]' | paste -sd "," -)"
 
     outputs: # Accesses output from within the same job
       instance_ips: ${{ steps.register.outputs.instance_ips }}

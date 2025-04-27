@@ -42,7 +42,7 @@ resource "aws_security_group_rule" "allow_all_outbound" {
 resource "aws_instance" "app_instances" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
-  key_name      = "EC2 Tutorial"
+  key_name      = var.key_name
 
   count = 2 # Number of EC2 instances
 
