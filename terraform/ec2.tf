@@ -44,7 +44,7 @@ resource "aws_instance" "app_instances" {
   instance_type = "t2.micro"
   key_name      = var.key_name
 
-  count = 2 # Number of EC2 instances
+  count = 3 # Number of EC2 instances
 
   root_block_device {
     volume_size = 30
