@@ -63,7 +63,7 @@ jobs:
           print_output "alb_dns_name"
           print_output "domain_name_url"
           echo "instance_ips: $(terraform output -json instance_ips | jq -r '.[]' | paste -sd "," -)"
-          print_output "route53_name_servers"
+          echo "route53_name_servers: $(terraform output -json route53_name_servers | jq -r '.[][]' | paste -sd "," -)"
 
     outputs: # Accesses output from within the same job
       instance_ips: ${{ steps.register.outputs.instance_ips }}
