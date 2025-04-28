@@ -52,10 +52,18 @@ jobs:
       - name: Show Terraform outputs
         working-directory: ./terraform
         run: |
-          echo "alb_dns_name: $(terraform output -raw alb_dns_name)"
-          echo "domain_name_url: $(terraform output -raw domain_name_url)"
+          print_output() {
+            local output_name=$1
+            if terraform output -raw $output_name > /dev/null 2>&1; then
+              echo "$output_name: $(terraform output -raw $output_name)"
+            else
+              echo "$output_name is not set."
+            fi
+          }
+          print_output "alb_dns_name"
+          print_output "domain_name_url"
           echo "instance_ips: $(terraform output -json instance_ips | jq -r '.[]' | paste -sd "," -)"
-          echo "route53_name_servers: $(terraform output -json route53_name_servers | jq -r '.[][]' | paste -sd "," -)"
+          print_output "route53_name_servers"
 
     outputs: # Accesses output from within the same job
       instance_ips: ${{ steps.register.outputs.instance_ips }}
@@ -75,7 +83,7 @@ jobs:
 
       - name: Set up Ansible SSH key
         run: |
-          echo "${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}" > ssh_private_key.pem
+          echo "${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}" | base64 --decode > ssh_private_key.pem
           chmod 600 ssh_private_key.pem
 
       - name: Install Ansible
@@ -83,6 +91,10 @@ jobs:
 
       - name: Run Ansible Playbook
         run: |
-          ansible-playbook -v -i "${{ needs.terraform.outputs.instance_ips }}" \
-          playbooks/install-docker.yml \
-          --extra-vars "ansible_user=ubuntu ansible_ssh_private_key_file=ssh_private_key.pem"
+          ansible-playbook -v -i "${{ needs.terraform.outputs.instance_ips }}," \
+          --private-key ssh_private_key.pem \
+          -u ubuntu \
+          playbooks/install-docker.yml
+
+      - name: Cleanup SSH private key
+        run: rm -f ssh_private_key.pem
